@@ -23,8 +23,8 @@ import GradingSubmissionsTable from './subcomponents/GradingSubmissionsTable';
 import GradingWorkspace from './subcomponents/GradingWorkspace';
 
 const groupOptions = [
-  { value: false, label: 'my groups' },
-  { value: true, label: 'all groups' }
+  { value: true, label: 'my groups' },
+  { value: false, label: 'all groups' }
 ];
 
 const showOptions = [
@@ -44,7 +44,7 @@ const Grading: React.FC = () => {
   const params = useParams<{ submissionId: string; questionId: string }>();
 
   const isAdmin = role === Role.Admin;
-  const [showAllGroups, setShowAllGroups] = useState(isAdmin || group === null);
+  const [showUserGroups, setShowUserGroups] = useState(isAdmin || group === null);
 
   const [pageSize, setPageSize] = useState(10);
   const [showAllSubmissions, setShowAllSubmissions] = useState(false);
@@ -54,14 +54,14 @@ const Grading: React.FC = () => {
     (page: number, filterParams: object) => {
       dispatch(
         SessionActions.fetchGradingOverviews(
-          !showAllGroups,
+          !showUserGroups,
           unpublishedToBackendParams(showAllSubmissions),
           paginationToBackendParams(page, pageSize),
           filterParams
         )
       );
     },
-    [dispatch, showAllGroups, showAllSubmissions, pageSize]
+    [dispatch, showUserGroups, showAllSubmissions, pageSize]
   );
 
   // If submissionId or questionId is defined but not numeric, redirect back to the Grading overviews page
@@ -102,7 +102,7 @@ const Grading: React.FC = () => {
 
   return (
     <ContentDisplay
-      loadContentDispatch={() => dispatch(SessionActions.fetchGradingOverviews(showAllGroups))}
+      loadContentDispatch={() => dispatch(SessionActions.fetchGradingOverviews(showUserGroups))}
       display={
         gradingOverviews?.data === undefined ? (
           loadingDisplay
@@ -133,8 +133,8 @@ const Grading: React.FC = () => {
               <Text>submissions from</Text>
               <SimpleDropdown
                 options={groupOptions}
-                selectedValue={showAllGroups}
-                onClick={setShowAllGroups}
+                selectedValue={showUserGroups}
+                onClick={setShowUserGroups}
                 popoverProps={{ position: Position.BOTTOM }}
                 buttonProps={{ minimal: true, rightIcon: 'caret-down' }}
               />
